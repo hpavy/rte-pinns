@@ -36,8 +36,10 @@ class RunSimulation:
             U_train,
             X_full,
             U_full,
-            X_border,
+            X_border_train,
             X_border_test,
+            U_border_train, 
+            U_border_test,
             mean_std,
             X_pde,
             X_test_pde,
@@ -46,9 +48,8 @@ class RunSimulation:
         ) = charge_data(self.hyper_param, self.param_adim)
         X_train.requires_grad_()
         U_train.requires_grad_()
-        X_border.requires_grad_()
-        # w_0_dim = torch.pi * (self.hyper_param["H"] / self.hyper_param["m"]) ** 0.5
-        # w_0 = w_0_dim * self.param_adim["L"] / (self.param_adim["V"])
+        X_border_train.requires_grad_()
+        U_border_train.requires_grad_()
 
         mean_std_json = dict()
         for key in mean_std:
@@ -99,10 +100,15 @@ class RunSimulation:
                 save_rate=self.hyper_param["save_rate"],
                 batch_size=self.hyper_param["batch_size"],
                 scheduler=scheduler,
-                X_border=X_border,
+                X_border_train=X_border_train,
                 X_border_test=X_border_test,
+                U_border_train=U_border_train,
+                U_border_test=U_border_test,
                 mean_std=mean_std,
                 param_adim=self.param_adim,
                 nb_simu=len(self.hyper_param["file"]),
                 force_inertie_bool=self.hyper_param["force_inertie_bool"],
+                u_border=self.hyper_param['u_border'],
+                v_border=self.hyper_param['v_border'],
+                p_border=self.hyper_param['p_border'],
             )

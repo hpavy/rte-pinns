@@ -31,13 +31,20 @@ def train(
     save_rate,
     batch_size,
     scheduler,
-    X_border,
+    X_border_train,
     X_border_test,
+    U_border_train,
+    U_border_test,
     mean_std,
     param_adim,
     nb_simu,
     force_inertie_bool,
+    u_border,
+    v_border,
+    p_border
 ):
+    print(f"Il y a {sum(p.numel() for p in model.parameters() if p.requires_grad)} parametres")
+    print(f"Il y a {sum(p.numel() for p in model.parameters() if p.requires_grad)} parametres", file=f)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     nb_it_tot = nb_epoch + len(train_loss["total"])
     print(
@@ -55,14 +62,15 @@ def train(
         stream_pde = torch.cuda.Stream()
         stream_border = torch.cuda.Stream()
 
-    weight_border = torch.tensor(weight_border_init, dtype=torch.float32, device=device)
-    weight_data = torch.tensor(weight_data_init, dtype=torch.float32, device=device)
-    weight_pde = torch.tensor(weight_pde_init, dtype=torch.float32, device=device)
+    weight_border = weight_border_init
+    weight_data = weight_data_init
+    weight_pde = weight_pde_init
+
+    border_verify = [k for k, test_true in enumerate([u_border, v_border, p_border]) if test_true]
 
     nb_batches = len(X_pde) // batch_size
     # batch_size = torch.tensor(batch_size, device=device, dtype=torch.int64)
 
-    Re = torch.tensor(Re, dtype=torch.float32, device=device)
     ya0_mean = mean_std["ya0_mean"].clone().to(device)
     ya0_std = mean_std["ya0_std"].clone().to(device)
     w0_mean = mean_std["w0_mean"].clone().to(device)
@@ -78,8 +86,10 @@ def train(
     v_std = mean_std["v_std"].clone().to(device)
     L_adim = torch.tensor(param_adim["L"], device=device, dtype=torch.float32)
     V_adim = torch.tensor(param_adim["V"], device=device, dtype=torch.float32)
-    X_border = X_border.to(device)
+    X_border_train = X_border_train.to(device)
     X_border_test = X_border_test.to(device).detach()
+    U_border_train = U_border_train.to(device)
+    U_border_test = U_border_test.to(device)
     ########
     X_pde = X_pde.to(device)
     ########
@@ -92,16 +102,13 @@ def train(
     U_train = U_train.to(device)
     X_test_data = X_test_data.to(device).detach()
     U_test_data = U_test_data.to(device).detach()
-    nb_simu = torch.tensor(nb_simu, device=device, dtype=torch.int64)
-    len_X_train_one = (
-        torch.tensor(X_train.size(0), device=device, dtype=torch.int64) // nb_simu
-    )
+    len_X_train_one = X_train.size(0) // nb_simu
     for epoch in range(len(train_loss["total"]), nb_it_tot):
         time_start_batch = time.time()
-        total_batch = torch.tensor([0.0], device=device)
-        data_batch = torch.tensor([0.0], device=device)
-        pde_batch = torch.tensor([0.0], device=device)
-        border_batch = torch.tensor([0.0], device=device)
+        total_batch = 0.0
+        data_batch = 0.0
+        pde_batch = 0.0
+        border_batch = 0.0
         model.train()  # on dit qu'on va entrainer (on a le dropout)
         for nb_batch in range(nb_batches):
         # for nb_batch, X_pde_batch in enumerate(dataloader):
@@ -114,7 +121,7 @@ def train(
                     .requires_grad_(True)
                 ).to(device)
                 pred_pde = model(X_pde_batch)
-                pred_pde1, pred_pde2, pred_pde3, res, y_ = pde(
+                pred_pde1, pred_pde2, pred_pde3 = pde(
                     pred_pde,
                     X_pde_batch,
                     Re=Re,
@@ -137,7 +144,7 @@ def train(
                 )
                 loss_pde = (
                     torch.mean(pred_pde1**2)
-                    + torch.mean(pred_pde2**2) * 0.
+                    + torch.mean(pred_pde2**2)
                     + torch.mean(pred_pde3**2)
                 )
 
@@ -145,7 +152,7 @@ def train(
                 X_train_batch = (
                     X_train[
                         (nb_batch % nb_simu)
-                        * len_X_train_one : (nb_batch % nb_simu + 1)
+                        * len_X_train_one:(nb_batch % nb_simu + 1)
                         * len_X_train_one
                     ]
                     .clone()
@@ -154,7 +161,7 @@ def train(
                 U_train_batch = (
                     U_train[
                         (nb_batch % nb_simu)
-                        * len_X_train_one : (nb_batch % nb_simu + 1)
+                        * len_X_train_one:(nb_batch % nb_simu + 1)
                         * len_X_train_one
                     ]
                     .clone()
@@ -166,19 +173,9 @@ def train(
 
             with torch.cuda.stream(stream_border):
                 # loss du border
-                pred_border = model(X_border)
-                goal_border = torch.tensor(
-                    [
-                        -mean_std["u_mean"] / mean_std["u_std"],
-                        -mean_std["v_mean"] / mean_std["v_std"],
-                    ],
-                    dtype=torch.float32,
-                    device=device,
-                ).expand(pred_border.shape[0], 2)
-                loss_border_cylinder = loss(pred_border[:, :2], goal_border)  # (MSE)
-
+                pred_border = model(X_border_train)
+                loss_border_cylinder = loss(pred_border[:, border_verify], U_border_train[:, border_verify])  # (MSE)
             torch.cuda.synchronize()
-
             loss_totale = (
                 weight_data * loss_data
                 + weight_pde * loss_pde
@@ -201,7 +198,7 @@ def train(
 
         # loss du pde
         test_pde = model(X_test_pde)
-        test_pde1, test_pde2, test_pde3, res, y_ = pde(
+        test_pde1, test_pde2, test_pde3 = pde(
             test_pde,
             X_test_pde,
             Re=Re,
@@ -225,7 +222,7 @@ def train(
         with torch.no_grad():
             loss_test_pde = (
                 torch.mean(test_pde1**2)
-                + torch.mean(test_pde2**2) * 0.
+                + torch.mean(test_pde2**2) 
                 + torch.mean(test_pde3**2)
             )
             # loss de la data
@@ -234,15 +231,7 @@ def train(
 
             # loss des bords
             pred_border_test = model(X_border_test)
-            goal_border_test = torch.tensor(
-                [
-                    -mean_std["u_mean"] / mean_std["u_std"],
-                    -mean_std["v_mean"] / mean_std["v_std"],
-                ],
-                dtype=torch.float32,
-                device=device,
-            ).expand(pred_border_test.shape[0], 2)
-            loss_test_border = loss(pred_border_test[:, :2], goal_border_test)  # (MSE)
+            loss_test_border = loss(pred_border_test[:, border_verify], U_border_test[:, border_verify])  # (MSE)
 
             # loss totale
             loss_test = (
@@ -270,11 +259,10 @@ def train(
             test_loss["data"].append(loss_test_data.item())
             test_loss["pde"].append(loss_test_pde.item())
             test_loss["border"].append(loss_test_border.item())
-            train_loss["total"].append(total_batch.item())
-            train_loss["data"].append(data_batch.item())
-            train_loss["pde"].append(pde_batch.item())
-            train_loss["border"].append(border_batch.item())
-            # train_loss["border"].append(-1)
+            train_loss["total"].append(total_batch)
+            train_loss["data"].append(data_batch)
+            train_loss["pde"].append(pde_batch)
+            train_loss["border"].append(border_batch)
 
         print(f"---------------------\nEpoch {epoch+1}/{nb_it_tot} :")
         print(f"---------------------\nEpoch {epoch+1}/{nb_it_tot} :", file=f)
@@ -293,10 +281,10 @@ def train(
             file=f,
         )
         print(
-            f"Weights  : ------------, data: {weight_data.item():.1e},   pde: {weight_pde.item():.1e},   border: {weight_border.item():.1e}"
+            f"Weights  : ------------, data: {weight_data:.1e},   pde: {weight_pde:.1e},   border: {weight_border:.1e}"
         )
         print(
-            f"Weights  : ------------, data: {weight_data.item():.1e},   pde: {weight_pde.item():.1e},   border: {weight_border.item():.1e}",
+            f"Weights  : ------------, data: {weight_data:.1e},   pde: {weight_pde:.1e},   border: {weight_border:.1e}",
             file=f,
         )
 

@@ -1,226 +1,61 @@
 import torch
 from run import RunSimulation
+from constants import DICT_Y0, DICT_CASE, PARAM_ADIM, M
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Le code se lance sur {device}")
 
 
-folder_result_name = "20_new_lr"  # le nom du dossier de résultat
+folder_result_name = "22_huge"  # name of the result folder
 
 # On utilise hyper_param_init uniquement si c'est un nouveau modèle
+
 hyper_param_init = {
-    "H": [
-        230.67,
-        230.67,
-        230.67,
-        230.67,
-        230.67,
-        230.67,
-        230.67,
-        230.67,
-        230.67,
-        230.67,
-        230.67,
-        261.39,
-        261.39,
-        261.39,
-        261.39,
-        261.39,
-        261.39,
-        261.39,
-        261.39,
-        261.39,
-        261.39,
-        261.39
-    ], # La valeur
-    "ya0": [
-        0.00125,
-        0.0025,
-        0.00375,
-        0.005,
-        0.00625,
-        0.006875,
-        0.0075,
-        0.00875,
-        0.009375,
-        0.01,
-        0.011875,
-        0.00125,
-        0.0025,
-        0.00375,
-        0.005,
-        0.00625,
-        0.006875,
-        0.0075,
-        0.00875,
-        0.009375,
-        0.01,
-        0.011875
-    ],
-    "m": 1.57,
-    "file": [
-        "data_john_4_case_2.csv",
-        "data_john_2_case_2.csv",
-        "data_john_5_case_2.csv",
-        "data_john_6_case_2.csv",
-        "data_john_7_case_2.csv",
-        "data_john_14_case_2.csv",
-        "data_john_8_case_2.csv",
-        "data_john_9_case_2.csv",
-        "data_john_16_case_2.csv",
-        "data_john_1_case_2.csv",
-        "data_john_18_case_2.csv",
-        "data_john_4_case_1.csv",
-        "data_john_2_case_1.csv",
-        "data_john_5_case_1.csv",
-        "data_john_6_case_1.csv",
-        "data_john_7_case_1.csv",
-        "data_john_14_case_1.csv",
-        "data_john_8_case_1.csv",
-        "data_john_9_case_1.csv",
-        "data_john_16_case_1.csv",
-        "data_john_1_case_1.csv",
-        "data_john_18_case_1.csv"
-    ],
+    "num": [2, 3, 5, 6, 8, 9, 11, 12, 14, 2, 3, 5, 6, 8, 9, 11, 12, 14],
+    "case": [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2,],
     "nb_epoch": 1000,
-    "save_rate": 20,
+    "save_rate": 10,
     "dynamic_weights": False,
     "lr_weights": 0.1,
-    "weight_data": 0.5,
-    "weight_pde": 0.5,
-    "weight_border": 0.,
+    "weight_data": 0.45,
+    "weight_pde": 0.1,
+    "weight_border": 0.45,
     "batch_size": 10000,
-    "nb_points_pde": 1000000,
+    "nb_points_pde": 200000,
     "Re": 100,
-    "lr_init": 3e-4,
+    "lr_init": 1e-4,
     "gamma_scheduler": 0.999,
     "nb_layers": 15,
     "nb_neurons": 64,
-    "n_pde_test": 5000,
+    "n_pde_test": 500,
     "n_data_test": 5000,
-    "nb_points": 144,
-    "x_min": -0.1,
-    "x_max": 0.1,
+    "nb_points": 100,
+    "x_min": -0.06,
+    "x_max": 0.06,
     "y_min": -0.06,
     "y_max": 0.06,
     "t_min": 6.5,
-    "nb_period": 10,
+    "nb_period": 20,
     "nb_period_plot": 2,
-    "nb_points_close_cylinder": 50,
-    "rayon_close_cylinder": 0.015,
-    "nb_points_border": 25,
-    "force_inertie_bool": False
+    "force_inertie_bool": False,
+    "nb_period": 20,
+    "u_border": True,
+    "v_border": False,
+    "p_border": True,
+    "r_min": 0.026/2,
+    'theta_border_min': 0.1,
+    'is_res': True,
+    'nb_blocks': 10,  # Pour ResNet
+    'nb_layer_block': 3  # Pour ResNet
 }
 
+hyper_param_init['H'] = [DICT_CASE[str(k)] for k in hyper_param_init['case']]
+hyper_param_init['ya0'] = [DICT_Y0[str(k)] for k in hyper_param_init['num']]
+hyper_param_init['file'] = [
+    f"model_{num_}_case_{case_}.csv" for num_, case_ in zip(hyper_param_init['num'], hyper_param_init['case'])
+    ]
+hyper_param_init['m'] = M
 
-"""
-hyper_param_init = {
-    "H": [
-        # 230.67,
-        # 230.67,
-        # 230.67,
-        # 230.67,
-        # 230.67,
-        230.67,
-        # 230.67,
-        # 230.67,
-        # 230.67,
-        # 230.67,
-        # 230.67,
-        # 261.39,
-        # 261.39,
-        # 261.39,
-        # 261.39,
-        # 261.39,
-        # 261.39,
-        # 261.39,
-        # 261.39,
-        # 261.39,
-        # 261.39,
-        # 261.39
-    ],
-    "ya0": [
-        # 0.00125,
-        # 0.0025,
-        # 0.00375,
-        # 0.005,
-        # 0.00625,
-        0.006875,
-        # 0.0075,
-        # 0.00875,
-        # 0.009375,
-        # 0.01,
-        # 0.011875,
-        # 0.00125,
-        # 0.0025,
-        # 0.00375,
-        # 0.005,
-        # 0.00625,
-        # 0.006875,
-        # 0.0075,
-        # 0.00875,
-        # 0.009375,
-        # 0.01,
-        # 0.011875
-    ],
-    "m": 1.57,
-    "file": [
-        # "data_john_4_case_2.csv",
-        # "data_john_2_case_2.csv",
-        # "data_john_5_case_2.csv",
-        # "data_john_6_case_2.csv",
-        # "data_john_7_case_2.csv",
-        "data_john_14_case_2.csv",
-        # "data_john_8_case_2.csv",
-        # "data_john_9_case_2.csv",
-        # "data_john_16_case_2.csv",
-        # "data_john_1_case_2.csv",
-        # "data_john_18_case_2.csv",
-        # "data_john_4_case_1.csv",
-        # "data_john_2_case_1.csv",
-        # "data_john_5_case_1.csv",
-        # "data_john_6_case_1.csv",
-        # "data_john_7_case_1.csv",
-        # "data_john_14_case_1.csv",
-        # "data_john_8_case_1.csv",
-        # "data_john_9_case_1.csv",
-        # "data_john_16_case_1.csv",
-        # "data_john_1_case_1.csv",
-        # "data_john_18_case_1.csv"
-    ],
-    "nb_epoch": 1000,
-    "save_rate": 20,
-    "dynamic_weights": True,
-    "lr_weights": 0.1,
-    "weight_data": 0.33,
-    "weight_pde": 0.33,
-    "weight_border": 0.33,
-    "batch_size": 10000,
-    "nb_points_pde": 1000000,
-    "Re": 100,
-    "lr_init": 0.0005,
-    "gamma_scheduler": 0.999,
-    "nb_layers": 15,
-    "nb_neurons": 64,
-    "n_pde_test": 5000,
-    "n_data_test": 5000,
-    "nb_points": 144,
-    "x_min": -0.1,
-    "x_max": 0.1,
-    "y_min": -0.06,
-    "y_max": 0.06,
-    "t_min": 6.5,
-    "nb_period": 10,
-    "nb_period_plot": 2,
-    "nb_points_close_cylinder": 50,
-    "rayon_close_cylinder": 0.015,
-    "nb_points_border": 12,
-    "force_inertie_bool": True
-}
-"""
-
-param_adim = {"V": 1.0, "L": 0.025, "rho": 1.2}
-
-simu = RunSimulation(hyper_param_init, folder_result_name, param_adim)
+simu = RunSimulation(hyper_param_init, folder_result_name, PARAM_ADIM)
 
 simu.run()

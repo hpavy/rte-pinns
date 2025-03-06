@@ -87,28 +87,41 @@ def pde(
         - (1 / Re) * ((u_std / (x_std**2)) * u_xx + (u_std / (y_std**2)) * u_yy)
     )
     if force_inertie_bool:
-        force_inertie_ = - (
+        force_inertie_ = - (  ############ ICI un - normalement 
             (input[:, 3] * ya0_std + ya0_mean) * ((input[:, 4] * w0_std + w0_mean) ** 2)
             * torch.cos((input[:, 4] * w0_std + w0_mean) * (t_std * input[:, 2] + t_mean))
         )
+        equ_2 = (
+            (v_std / t_std) * v_t
+            + (u * u_std + u_mean) * (v_std / x_std) * v_x
+            + (v * v_std + v_mean) * (v_std / y_std) * v_y
+            + (p_std / y_std) * p_y
+            - (1 / Re) * ((v_std / (x_std**2)) * v_xx + (v_std / (y_std**2)) * v_yy)
+            + force_inertie_
+        )
     else:
-        force_inertie_ = 0
-    equ_2 = (
-        (v_std / t_std) * v_t
-        + (u * u_std + u_mean) * (v_std / x_std) * v_x
-        + (v * v_std + v_mean) * (v_std / y_std) * v_y
-        + (p_std / y_std) * p_y
-        - (1 / Re) * ((v_std / (x_std**2)) * v_xx + (v_std / (y_std**2)) * v_yy)
-        + force_inertie_
-    )
+        equ_2 = torch.zeros(1,)
+   
     equ_3 = (u_std / x_std) * u_x + (v_std / y_std) * v_y
-    return equ_1, equ_2, equ_3, force_inertie_, torch.mean((input[:, 4] * w0_std + w0_mean))*(V_adim/L_adim)
+    return equ_1, equ_2, equ_3
 
 
 # Le NN
 
 
 class PINNs(nn.Module):
+    def __init__(self, hyper_param):
+        super().__init__()
+        if hyper_param['is_res']:
+            self.nn = ResNet(hyper_param)
+        else:
+            self.nn = MLP(hyper_param)
+    
+    def forward(self, x):
+        return self.nn(x)
+
+
+class MLP(nn.Module):
     def __init__(self, hyper_param):
         super().__init__()
         self.init_layer = nn.ModuleList([nn.Linear(5, hyper_param["nb_neurons"])])
@@ -134,6 +147,56 @@ class PINNs(nn.Module):
         for layer in self.layers:
             nn.init.xavier_uniform_(layer.weight)
             nn.init.zeros_(layer.bias)
+
+
+class ResBlock(nn.Module):
+    def __init__(self, hyper_param):
+        super().__init__()
+        self.nb_layer_block = hyper_param["nb_layer_block"]
+        self.nb_neurons = hyper_param["nb_neurons"]
+        self.layers = nn.ModuleList(
+            [
+                nn.Linear(self.nb_neurons, self.nb_neurons)
+                for _ in range(self.nb_layer_block - 1)
+            ]
+        )
+        self.initial_param()
+
+    def forward(self, x):
+        x_ = x
+        for k, layer in enumerate(self.layers):
+            x_ = torch.tanh(layer(x_))
+        return x + x_  # Retourner la sortie
+
+    def initial_param(self):
+        for layer in self.layers:
+            nn.init.xavier_uniform_(layer.weight)
+            nn.init.zeros_(layer.bias)
+
+
+class ResNet(nn.Module):
+    def __init__(self, hyper_param):
+        super().__init__()
+        self.init_layer = nn.ModuleList([nn.Linear(5, hyper_param["nb_neurons"])])
+        self.hiden_layers = nn.ModuleList(
+            ResBlock(hyper_param) for k in range(hyper_param['nb_blocks'])
+        )
+        self.final_layer = nn.ModuleList([nn.Linear(hyper_param["nb_neurons"], 3)])
+        self.initial_param()
+        self.layers = self.init_layer + self.hiden_layers + self.final_layer
+
+    def forward(self, x):
+        for k, layer in enumerate(self.layers):
+            x = layer(x)
+        return x  # Retourner la sortie
+
+    def initial_param(self):
+        nn.init.xavier_uniform_(self.init_layer[0].weight)
+        nn.init.zeros_(self.init_layer[0].bias)
+        nn.init.xavier_uniform_(self.final_layer[0].weight)
+        nn.init.zeros_(self.final_layer[0].bias)
+
+
 
 
 if __name__ == "__main__":
