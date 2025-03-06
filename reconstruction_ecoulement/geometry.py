@@ -35,8 +35,8 @@ class RectangleWithoutCylinder:
         self.mean_std = mean_std
         self.param_adim = param_adim
 
-    def generate_lhs(self, n):
-        """Donne répartition latin hypercube"""
+    def generate_lhs(self, n): # Au final je n'utilise pas ici
+        """Donne répartition latin hypercube""" 
         max_min = torch.tensor(
             [self.x_max - self.x_min, self.y_max -
                 self.y_min, self.t_max - self.t_min]

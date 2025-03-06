@@ -16,14 +16,14 @@ DICT_Y0 = {
     "15": 0.0010625,
     "16": 0.011875,
     "17": 0.0175,
-}
+}  # les différentes valeurs de ya0
 
 
 DICT_CASE = {
     "1": 261.39,
     "2": 230.67
-}
+}  # les valeurs de H en fonction du cas
 
-PARAM_ADIM = {"V": 1.0, "L": 0.025, "rho": 1.2}
+PARAM_ADIM = {"V": 1.0, "L": 0.025, "rho": 1.2}  # Les paramètres pour addimensionner
 
-M = 1.57
+M = 1.57  # La masse dans le modèle

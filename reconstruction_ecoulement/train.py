@@ -3,8 +3,7 @@ import torch
 import time
 from utils import write_csv
 from pathlib import Path
-from torch.utils.data import DataLoader
-from utils import CustomDataset
+
 
 def train(
     nb_epoch,
@@ -41,7 +40,8 @@ def train(
     force_inertie_bool,
     u_border,
     v_border,
-    p_border
+    p_border,
+    with_pinns
 ):
     print(f"Il y a {sum(p.numel() for p in model.parameters() if p.requires_grad)} parametres")
     print(f"Il y a {sum(p.numel() for p in model.parameters() if p.requires_grad)} parametres", file=f)
@@ -90,13 +90,7 @@ def train(
     X_border_test = X_border_test.to(device).detach()
     U_border_train = U_border_train.to(device)
     U_border_test = U_border_test.to(device)
-    ########
     X_pde = X_pde.to(device)
-    ########
-    # dataset = CustomDataset(X_pde)
-    # dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=2, pin_memory=True)
-
-    ###############
     X_test_pde = X_test_pde.to(device).requires_grad_(True)
     X_train = X_train.to(device)
     U_train = U_train.to(device)
@@ -111,42 +105,43 @@ def train(
         border_batch = 0.0
         model.train()  # on dit qu'on va entrainer (on a le dropout)
         for nb_batch in range(nb_batches):
-        # for nb_batch, X_pde_batch in enumerate(dataloader):
             with torch.cuda.stream(stream_pde):
-                # X_pde_batch = X_pde_batch.to(device).requires_grad_(True)
-                # loss du pde
-                X_pde_batch = (
-                    X_pde[nb_batch * batch_size: (nb_batch + 1) * batch_size, :]
-                    .clone()
-                    .requires_grad_(True)
-                ).to(device)
-                pred_pde = model(X_pde_batch)
-                pred_pde1, pred_pde2, pred_pde3 = pde(
-                    pred_pde,
-                    X_pde_batch,
-                    Re=Re,
-                    x_std=x_std,
-                    y_std=y_std,
-                    u_mean=u_mean,
-                    v_mean=v_mean,
-                    p_std=p_std,
-                    t_std=t_std,
-                    t_mean=t_mean,
-                    u_std=u_std,
-                    v_std=v_std,
-                    ya0_mean=ya0_mean,
-                    ya0_std=ya0_std,
-                    w0_mean=w0_mean,
-                    w0_std=w0_std,
-                    L_adim=L_adim,
-                    V_adim=V_adim,
-                    force_inertie_bool=force_inertie_bool,
-                )
-                loss_pde = (
-                    torch.mean(pred_pde1**2)
-                    + torch.mean(pred_pde2**2)
-                    + torch.mean(pred_pde3**2)
-                )
+                if with_pinns:
+                    # loss du pde
+                    X_pde_batch = (
+                        X_pde[nb_batch * batch_size: (nb_batch + 1) * batch_size, :]
+                        .clone()
+                        .requires_grad_(True)
+                    ).to(device)
+                    pred_pde = model(X_pde_batch)
+                    pred_pde1, pred_pde2, pred_pde3 = pde(
+                        pred_pde,
+                        X_pde_batch,
+                        Re=Re,
+                        x_std=x_std,
+                        y_std=y_std,
+                        u_mean=u_mean,
+                        v_mean=v_mean,
+                        p_std=p_std,
+                        t_std=t_std,
+                        t_mean=t_mean,
+                        u_std=u_std,
+                        v_std=v_std,
+                        ya0_mean=ya0_mean,
+                        ya0_std=ya0_std,
+                        w0_mean=w0_mean,
+                        w0_std=w0_std,
+                        L_adim=L_adim,
+                        V_adim=V_adim,
+                        force_inertie_bool=force_inertie_bool,
+                    )
+                    loss_pde = (
+                        torch.mean(pred_pde1**2)
+                        + torch.mean(pred_pde2**2)
+                        + torch.mean(pred_pde3**2)
+                    )
+                else :
+                    loss_pde = torch.zeros((1)).to(device)
 
             with torch.cuda.stream(stream_data):
                 X_train_batch = (
@@ -192,7 +187,6 @@ def train(
                 pde_batch += loss_pde.item()
                 border_batch += loss_border_cylinder.item()
 
-        ######## A partir d'ici #######
         # Pour le test :
         model.eval()
 
@@ -294,7 +288,7 @@ def train(
         print(f"time_epoch: {time.time()-time_start_batch:.0f}s")
         print(f"time: {time.time()-time_start_batch:.0f}s", file=f)
 
-        if (epoch + 1) % save_rate == 0:
+        if (epoch + 1) % save_rate == 0:  # Pour save le modèle
             with torch.no_grad():
                 dossier_midle = Path(
                     folder_result + f"/epoch{len(train_loss['total'])}"

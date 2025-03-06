@@ -23,26 +23,17 @@ def read_csv(path):
     return pd.read_csv(path)
 
 
-class CustomDataset(Dataset):
-    def __init__(self, x):
-        self.x = torch.tensor(x, dtype=torch.float32)
-
-    def __len__(self):
-        return self.x.shape[0]
-
-    def __getitem__(self, idx):
-        return self.x[idx]
-
-
 def charge_data(hyper_param, param_adim):
     """
     Charge the data of X_full, U_full with every points
     And X_train, U_train with less points
     """
     # La data
-    # On adimensionne la data
+    # On adimensionne la data (normalisation Z)
     time_start_charge = time.time()
     nb_simu = len(hyper_param["file"])
+
+    # On charge les fichiers 
     x_full, y_full, t_full, ya0_full, w0_full = [], [], [], [], []
     u_full, v_full, p_full = [], [], []
     x_border, y_border, t_border, ya0_border, w0_border = [], [], [], [], []
@@ -65,9 +56,10 @@ def charge_data(hyper_param, param_adim):
     u_norm_border, v_norm_border, p_norm_border = [], [], []
     H_numpy = np.array(hyper_param["H"])
     f_numpy = 0.5 * (H_numpy / hyper_param["m"]) ** 0.5
-    f = np.min(f_numpy)
-    t_max = hyper_param["t_min"] + hyper_param["nb_period"] / f
+    f = np.min(f_numpy)  # La plus petite période
+    t_max = hyper_param["t_min"] + hyper_param["nb_period"] / f 
     for k in range(nb_simu):
+        # On charge le csv
         df = pd.read_csv("data/" + hyper_param["file"][k])
         df_modified = df.loc[
             (df["Points:0"] >= hyper_param["x_min"])
@@ -121,6 +113,7 @@ def charge_data(hyper_param, param_adim):
             torch.tensor(df_modified["Pressure"].to_numpy(), dtype=torch.float32)
             / ((param_adim["V"] ** 2) * param_adim["rho"])
         )
+
         ### Le border
 
         df_border = pd.read_csv("data/" + hyper_param["file"][k][:-4]+'_border.csv')
@@ -182,6 +175,7 @@ def charge_data(hyper_param, param_adim):
         print(f"fichier n°{k} chargé")
         
     if nb_simu == 1:
+        # si on fait de la reconstruction
         w0_std = torch.ones(1)
         ya0_std = torch.ones(1)
     else:
@@ -274,6 +268,7 @@ def charge_data(hyper_param, param_adim):
             )
         )
 
+    # Les valeurs qu'on va essayer de fitter 
     X_train = torch.zeros((0, 5))
     U_train = torch.zeros((0, 3))
     print("Starting X_train")

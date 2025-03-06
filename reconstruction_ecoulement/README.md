@@ -9,7 +9,7 @@
 
 ## Description
 
-Une brève description de votre projet. Expliquez ce que fait votre projet et pourquoi il est utile.
+Ce dossier montre deux exemples d'utilisation du code pour tenter de reconstruire un écoulement avec des données manquantes. Un premier exemple en utilisant les pinns et un deuxième sans les utiliser
 
 ## Fonctionnalités
 
@@ -19,9 +19,8 @@ Une brève description de votre projet. Expliquez ce que fait votre projet et po
 
 ## Installation
 
-Instructions détaillées pour installer votre projet. Par exemple :
+Il faut charger les données dans un dossier data dans ce fichier
 
-```bash
-git clone https://github.com/votre-utilisateur/votre-projet.git
-cd votre-projet
-npm install
+Ensuite régler les hyperparamètres comme on en a envie
+
+Et enfin on peut lancer dans le terminal avec la commande python main.py

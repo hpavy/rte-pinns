@@ -87,7 +87,7 @@ def pde(
         - (1 / Re) * ((u_std / (x_std**2)) * u_xx + (u_std / (y_std**2)) * u_yy)
     )
     if force_inertie_bool:
-        force_inertie_ = - (  ############ ICI un - normalement 
+        force_inertie_ = - (
             (input[:, 3] * ya0_std + ya0_mean) * ((input[:, 4] * w0_std + w0_mean) ** 2)
             * torch.cos((input[:, 4] * w0_std + w0_mean) * (t_std * input[:, 2] + t_mean))
         )

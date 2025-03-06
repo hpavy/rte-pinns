@@ -20,7 +20,6 @@ class RunSimulation:
         self.nb_simu = len(self.hyper_param["file"])
 
     def run(self):
-        # Charging the model
         # Creation du dossier de result
         Path(self.folder_result).mkdir(parents=True, exist_ok=True)
         if not Path(self.folder_result + "/hyper_param.json").exists():
@@ -31,6 +30,8 @@ class RunSimulation:
         else:
             with open(self.folder_result + "/hyper_param.json", "r") as file:
                 self.hyper_param = json.load(file)
+
+        # Chargement des données
         (
             X_train,
             U_train,
@@ -51,20 +52,19 @@ class RunSimulation:
         X_border_train.requires_grad_()
         U_border_train.requires_grad_()
 
+        # On écrit mean_std
         mean_std_json = dict()
         for key in mean_std:
             mean_std_json[key] = mean_std[key].item()
         with open(self.folder_result + "/mean_std.json", "w") as file:
             json.dump(mean_std_json, file, indent=4)
 
-        # Initialiser le modèle
-
         # On plot les print dans un fichier texte
         with open(self.folder_result + "/print.txt", "a") as f:
             model, optimizer, scheduler, loss, train_loss, test_loss, weights = (
                 init_model(f, self.hyper_param, self.device, self.folder_result)
             )
-            # On entraine le modèle
+            
             if self.hyper_param["dynamic_weights"]:
                 weight_data = weights["weight_data"]
                 weight_pde = weights["weight_pde"]
@@ -75,6 +75,7 @@ class RunSimulation:
                 weight_border = self.hyper_param["weight_border"]
                 # Data loading
 
+            # On entraine le modèle
             train(
                 nb_epoch=1000,
                 train_loss=train_loss,
@@ -111,4 +112,5 @@ class RunSimulation:
                 u_border=self.hyper_param['u_border'],
                 v_border=self.hyper_param['v_border'],
                 p_border=self.hyper_param['p_border'],
+                with_pinns=self.hyper_param['with_pinns']
             )
