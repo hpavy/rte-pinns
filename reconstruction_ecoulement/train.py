@@ -168,14 +168,18 @@ def train(
 
             with torch.cuda.stream(stream_border):
                 # loss du border
-                pred_border = model(X_border_train)
-                loss_border_cylinder = loss(pred_border[:, border_verify], U_border_train[:, border_verify])  # (MSE)
+                if sum(border_verify) == 0:
+                    loss_border_cylinder = torch.zeros((1)).to(device)
+                else:
+                    pred_border = model(X_border_train)
+                    loss_border_cylinder = loss(pred_border[:, border_verify], U_border_train[:, border_verify])  # (MSE)
             torch.cuda.synchronize()
             loss_totale = (
                 weight_data * loss_data
                 + weight_pde * loss_pde
                 + weight_border * loss_border_cylinder
             )
+
 
             # Backpropagation
             loss_totale.backward()
@@ -224,8 +228,11 @@ def train(
             loss_test_data = loss(U_test_data, test_data)  # (MSE)
 
             # loss des bords
-            pred_border_test = model(X_border_test)
-            loss_test_border = loss(pred_border_test[:, border_verify], U_border_test[:, border_verify])  # (MSE)
+            if sum(border_verify) == 0:
+                loss_test_border = torch.zeros((1)).to(device)
+            else:
+                pred_border_test = model(X_border_test)
+                loss_test_border = loss(pred_border_test[:, border_verify], U_border_test[:, border_verify])  # (MSE)
 
             # loss totale
             loss_test = (
