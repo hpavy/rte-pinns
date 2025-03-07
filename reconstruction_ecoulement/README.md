@@ -10,6 +10,15 @@
 
 Ce dossier montre deux exemples d'utilisation du code pour tenter de reconstruire un écoulement avec des données manquantes. Un premier exemple en utilisant les PINNs et un deuxième sans les utiliser. Il montre bien que les PINNs permettent de faire des choses que le machine learning classique ne peut pas faire.
 
+### Reconstruction avec les PINNs :
+
+![Vidéo de la reconstruction](./results/1_reconstruction_avec_pinns/velocity_norm.gif)
+
+
+### Reconstruction sans les PINNs :
+![Vidéo de la reconstruction](./results/2_reconstruction_sans_pinns/velocity_norm.gif)
+
+
 ## Fichiers
 
 - `main` : Il permet de lancer le fichier, on peut rentrer les hyperparamètres de nos simulations dans ce fichier.
