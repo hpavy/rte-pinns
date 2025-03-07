@@ -36,4 +36,14 @@ Chaque dossier correspond au code d'une partie de mon rapport, il peut être pri
 
 Je lance mes codes sur la plateforme onyxia pour avoir accès à des GPU (cf le rapport)
 
+Globalement les codes ont tous à peu près la même structure de fichiers
 
+## Exemples de reconstructions d'écoulements
+
+### Reconstruction avec les PINNs :
+
+![Vidéo de la reconstruction](./reconstruction_ecoulement/results/1_reconstruction_avec_pinns/velocity_norm.gif)
+
+
+### Reconstruction sans les PINNs :
+![Vidéo de la reconstruction](./reconstruction_ecoulement/results/2_reconstruction_sans_pinns/velocity_norm.gif)
