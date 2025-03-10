@@ -6,7 +6,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Le code se lance sur {device}")
 
 
-folder_result_name = "piche"  # Le nom du fichier de résultats
+folder_result_name = "1_reconstruction_avec_pinns"  # Le nom du fichier de résultats
 
 # On utilise hyperparam_init uniquement si c'est un nouveau modèle
 hyperparam_init = {
