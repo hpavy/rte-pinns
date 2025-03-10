@@ -110,28 +110,28 @@ def pde(
 
 
 class PINNs(nn.Module):
-    def __init__(self, hyper_param):
+    def __init__(self, hyperparam):
         super().__init__()
-        if hyper_param['is_res']:
-            self.nn = ResNet(hyper_param)
+        if hyperparam['is_res']:
+            self.nn = ResNet(hyperparam)
         else:
-            self.nn = MLP(hyper_param)
+            self.nn = MLP(hyperparam)
     
     def forward(self, x):
         return self.nn(x)
 
 
 class MLP(nn.Module):
-    def __init__(self, hyper_param):
+    def __init__(self, hyperparam):
         super().__init__()
-        self.init_layer = nn.ModuleList([nn.Linear(5, hyper_param["nb_neurons"])])
+        self.init_layer = nn.ModuleList([nn.Linear(5, hyperparam["nb_neurons"])])
         self.hiden_layers = nn.ModuleList(
             [
-                nn.Linear(hyper_param["nb_neurons"], hyper_param["nb_neurons"])
-                for _ in range(hyper_param["nb_layers"] - 1)
+                nn.Linear(hyperparam["nb_neurons"], hyperparam["nb_neurons"])
+                for _ in range(hyperparam["nb_layers"] - 1)
             ]
         )
-        self.final_layer = nn.ModuleList([nn.Linear(hyper_param["nb_neurons"], 3)])
+        self.final_layer = nn.ModuleList([nn.Linear(hyperparam["nb_neurons"], 3)])
         self.layers = self.init_layer + self.hiden_layers + self.final_layer
         self.initial_param()
 
@@ -150,10 +150,10 @@ class MLP(nn.Module):
 
 
 class ResBlock(nn.Module):
-    def __init__(self, hyper_param):
+    def __init__(self, hyperparam):
         super().__init__()
-        self.nb_layer_block = hyper_param["nb_layer_block"]
-        self.nb_neurons = hyper_param["nb_neurons"]
+        self.nb_layer_block = hyperparam["nb_layer_block"]
+        self.nb_neurons = hyperparam["nb_neurons"]
         self.layers = nn.ModuleList(
             [
                 nn.Linear(self.nb_neurons, self.nb_neurons)
@@ -175,13 +175,13 @@ class ResBlock(nn.Module):
 
 
 class ResNet(nn.Module):
-    def __init__(self, hyper_param):
+    def __init__(self, hyperparam):
         super().__init__()
-        self.init_layer = nn.ModuleList([nn.Linear(5, hyper_param["nb_neurons"])])
+        self.init_layer = nn.ModuleList([nn.Linear(5, hyperparam["nb_neurons"])])
         self.hiden_layers = nn.ModuleList(
-            ResBlock(hyper_param) for k in range(hyper_param['nb_blocks'])
+            ResBlock(hyperparam) for k in range(hyperparam['nb_blocks'])
         )
-        self.final_layer = nn.ModuleList([nn.Linear(hyper_param["nb_neurons"], 3)])
+        self.final_layer = nn.ModuleList([nn.Linear(hyperparam["nb_neurons"], 3)])
         self.initial_param()
         self.layers = self.init_layer + self.hiden_layers + self.final_layer
 
@@ -200,7 +200,7 @@ class ResNet(nn.Module):
 
 
 if __name__ == "__main__":
-    hyper_param = {"nb_layers": 12, "nb_neurons": 64}
-    piche = PINNs(hyper_param)
+    hyperparam = {"nb_layers": 12, "nb_neurons": 64}
+    piche = PINNs(hyperparam)
     nombre_parametres = sum(p.numel() for p in piche.parameters() if p.requires_grad)
     print(nombre_parametres)

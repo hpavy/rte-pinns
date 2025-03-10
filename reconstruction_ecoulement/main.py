@@ -6,10 +6,10 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Le code se lance sur {device}")
 
 
-folder_result_name = "2_reconstruction_sans_pinns"  # Le nom du fichier de résultats
+folder_result_name = "piche"  # Le nom du fichier de résultats
 
-# On utilise hyper_param_init uniquement si c'est un nouveau modèle
-hyper_param_init = {
+# On utilise hyperparam_init uniquement si c'est un nouveau modèle
+hyperparam_init = {
     "num": [1],
     "case": [2],
     "nb_epoch": 1000,  # le nombre d'epoch
@@ -50,13 +50,13 @@ hyper_param_init = {
     'nb_layer_block': 3  # Pour ResNet
 }
 
-hyper_param_init['H'] = [DICT_CASE[str(k)] for k in hyper_param_init['case']]
-hyper_param_init['ya0'] = [DICT_Y0[str(k)] for k in hyper_param_init['num']]
-hyper_param_init['file'] = [
-    f"model_{num_}_case_{case_}.csv" for num_, case_ in zip(hyper_param_init['num'], hyper_param_init['case'])
+hyperparam_init['H'] = [DICT_CASE[str(k)] for k in hyperparam_init['case']]
+hyperparam_init['ya0'] = [DICT_Y0[str(k)] for k in hyperparam_init['num']]
+hyperparam_init['file'] = [
+    f"model_{num_}_case_{case_}.csv" for num_, case_ in zip(hyperparam_init['num'], hyperparam_init['case'])
     ]
-hyper_param_init['m'] = M
+hyperparam_init['m'] = M
 
-simu = RunSimulation(hyper_param_init, folder_result_name, PARAM_ADIM)  
+simu = RunSimulation(hyperparam_init, folder_result_name, PARAM_ADIM)  
 
 simu.run()  # début de la simulation

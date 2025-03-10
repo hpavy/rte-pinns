@@ -23,7 +23,7 @@ def read_csv(path):
     return pd.read_csv(path)
 
 
-def charge_data(hyper_param, param_adim):
+def charge_data(hyperparam, param_adim):
     """
     Charge the data of X_full, U_full with every points
     And X_train, U_train with less points
@@ -31,7 +31,7 @@ def charge_data(hyper_param, param_adim):
     # La data
     # On adimensionne la data (normalisation Z)
     time_start_charge = time.time()
-    nb_simu = len(hyper_param["file"])
+    nb_simu = len(hyperparam["file"])
 
     # On charge les fichiers 
     x_full, y_full, t_full, ya0_full, w0_full = [], [], [], [], []
@@ -54,27 +54,27 @@ def charge_data(hyper_param, param_adim):
         [],
     )
     u_norm_border, v_norm_border, p_norm_border = [], [], []
-    H_numpy = np.array(hyper_param["H"])
-    f_numpy = 0.5 * (H_numpy / hyper_param["m"]) ** 0.5
+    H_numpy = np.array(hyperparam["H"])
+    f_numpy = 0.5 * (H_numpy / hyperparam["m"]) ** 0.5
     f = np.min(f_numpy)  # La plus petite période
-    t_max = hyper_param["t_min"] + hyper_param["nb_period"] / f 
+    t_max = hyperparam["t_min"] + hyperparam["nb_period"] / f 
     for k in range(nb_simu):
         # On charge le csv
-        df = pd.read_csv("data/" + hyper_param["file"][k])
+        df = pd.read_csv("data/" + hyperparam["file"][k])
         df_modified = df.loc[
-            (df["Points:0"] >= hyper_param["x_min"])
-            & (df["Points:0"] <= hyper_param["x_max"])
-            & (df["Points:1"] >= hyper_param["y_min"])
-            & (df["Points:1"] <= hyper_param["y_max"])
-            & (df["Time"] > hyper_param["t_min"])
+            (df["Points:0"] >= hyperparam["x_min"])
+            & (df["Points:0"] <= hyperparam["x_max"])
+            & (df["Points:1"] >= hyperparam["y_min"])
+            & (df["Points:1"] <= hyperparam["y_max"])
+            & (df["Time"] > hyperparam["t_min"])
             & (df["Time"] < t_max)
             & (df["Points:2"] == 0.0)
-            & (df["Points:0"] ** 2 + df["Points:1"] ** 2 > hyper_param['r_min'] ** 2),
+            & (df["Points:0"] ** 2 + df["Points:1"] ** 2 > hyperparam['r_min'] ** 2),
             :,
         ].copy()
-        df_modified.loc[:, "ya0"] = hyper_param["ya0"][k]
+        df_modified.loc[:, "ya0"] = hyperparam["ya0"][k]
         df_modified.loc[:, "w0"] = (
-            torch.pi * (hyper_param["H"][k] / hyper_param["m"]) ** 0.5
+            torch.pi * (hyperparam["H"][k] / hyperparam["m"]) ** 0.5
         )
 
         # Adimensionnement
@@ -87,8 +87,8 @@ def charge_data(hyper_param, param_adim):
             / param_adim["L"]
         )
         # f_flow = f_numpy[k]
-        # time_without_modulo = df_modified["Time"].to_numpy() - hyper_param['t_min']
-        # time_with_modulo = hyper_param['t_min'] + time_without_modulo % (1/f_flow)
+        # time_without_modulo = df_modified["Time"].to_numpy() - hyperparam['t_min']
+        # time_with_modulo = hyperparam['t_min'] + time_without_modulo % (1/f_flow)
         time_with_modulo = df_modified["Time"].to_numpy()
         t_full.append(
             torch.tensor(time_with_modulo, dtype=torch.float32)
@@ -117,25 +117,25 @@ def charge_data(hyper_param, param_adim):
 
         ### Le border
 
-        df_border = pd.read_csv("data/" + hyper_param["file"][k][:-4]+'_border.csv')
+        df_border = pd.read_csv("data/" + hyperparam["file"][k][:-4]+'_border.csv')
         df_modified_border = df_border.loc[
-            (df_border["Time"] > hyper_param["t_min"])
+            (df_border["Time"] > hyperparam["t_min"])
             & (df_border["Time"] < t_max)
             & (df_border["Points:2"] == 0.0),
             :,
         ].copy()
 
-        df_modified_border.loc[:, "ya0"] = hyper_param["ya0"][k]
+        df_modified_border.loc[:, "ya0"] = hyperparam["ya0"][k]
         df_modified_border.loc[:, "w0"] = (
-            torch.pi * (hyper_param["H"][k] / hyper_param["m"]) ** 0.5
+            torch.pi * (hyperparam["H"][k] / hyperparam["m"]) ** 0.5
         )
 
         df_modified_border.loc[:, "theta"] = np.arctan2(df_modified_border['Points:1'], df_modified_border['Points:0'])
 
         # on ne garde que ceux loin de pi et 0
         df_modified_border = df_modified_border.loc[
-            (np.abs(df_modified_border["theta"]) > hyper_param['theta_border_min'])
-            & (np.abs(np.pi - np.abs(df_modified_border["theta"])) > hyper_param['theta_border_min'])
+            (np.abs(df_modified_border["theta"]) > hyperparam['theta_border_min'])
+            & (np.abs(np.pi - np.abs(df_modified_border["theta"])) > hyperparam['theta_border_min'])
         ]
         df_modified_border.loc[:, 'Pressure'] = - df_modified_border['Stress:1'] / np.sin(df_modified_border["theta"])
 
@@ -149,8 +149,8 @@ def charge_data(hyper_param, param_adim):
             / param_adim["L"]
         )
         f_flow = f_numpy[k]
-        time_without_modulo = df_modified_border["Time"].to_numpy() - hyper_param["t_min"]
-        time_with_modulo = hyper_param["t_min"] + time_without_modulo % (1 / f_flow)
+        time_without_modulo = df_modified_border["Time"].to_numpy() - hyperparam["t_min"]
+        time_with_modulo = hyperparam["t_min"] + time_without_modulo % (1 / f_flow)
         t_border.append(
             torch.tensor(time_with_modulo, dtype=torch.float32)
             / (param_adim["L"] / param_adim["V"])
@@ -273,23 +273,23 @@ def charge_data(hyper_param, param_adim):
     X_train = torch.zeros((0, 5))
     U_train = torch.zeros((0, 3))
     print("Starting X_train")
-    for nb, ya0_ in enumerate(hyper_param["ya0"]):
-        print(f"Simu n°{nb}/{len(hyper_param['ya0'])}")
+    for nb, ya0_ in enumerate(hyperparam["ya0"]):
+        print(f"Simu n°{nb}/{len(hyperparam['ya0'])}")
         print(f"Time:{(time.time()-time_start_charge):.3f}")
         w_0 = w0_norm_full[nb][0].item()
         y_0 = ya0_norm_full[nb][0].item()
         for time_ in torch.unique(t_norm_full[nb]):
             masque = t_norm_full[nb] == time_
             indices = torch.randperm(x_norm_full[nb][masque].size(0))[
-                : hyper_param["nb_points"]
+                : hyperparam["nb_points"]
             ]
             new_x = torch.stack(
                 (
                     x_norm_full[nb][masque][indices],
                     y_norm_full[nb][masque][indices],
-                    torch.ones(hyper_param["nb_points"]) * time_,
-                    torch.ones(hyper_param["nb_points"]) * y_0,
-                    torch.ones(hyper_param["nb_points"]) * w_0,
+                    torch.ones(hyperparam["nb_points"]) * time_,
+                    torch.ones(hyperparam["nb_points"]) * y_0,
+                    torch.ones(hyperparam["nb_points"]) * w_0,
                 ),
                 dim=1,
             )
@@ -333,45 +333,45 @@ def charge_data(hyper_param, param_adim):
         param_adim=param_adim,
     )
 
-    X_pde = torch.empty((hyper_param["nb_points_pde"] * nb_simu, 5))
+    X_pde = torch.empty((hyperparam["nb_points_pde"] * nb_simu, 5))
     for nb in range(len(ya0_norm_full)):
         X_pde_without_param = torch.concat(
             (
-                rectangle.generate_lhs(hyper_param["nb_points_pde"]),
-                ya0_norm_full[nb][0] * torch.ones(hyper_param["nb_points_pde"]).reshape(-1, 1),
-                torch.ones(hyper_param["nb_points_pde"]).reshape(-1, 1)
+                rectangle.generate_lhs(hyperparam["nb_points_pde"]),
+                ya0_norm_full[nb][0] * torch.ones(hyperparam["nb_points_pde"]).reshape(-1, 1),
+                torch.ones(hyperparam["nb_points_pde"]).reshape(-1, 1)
                 * w0_norm_full[nb][0],
             ),
             dim=1,
         )
         X_pde[
-            nb * hyper_param["nb_points_pde"]: (nb + 1) * hyper_param["nb_points_pde"]
+            nb * hyperparam["nb_points_pde"]: (nb + 1) * hyperparam["nb_points_pde"]
         ] = X_pde_without_param
     indices = torch.randperm(X_pde.size(0))
     X_pde = X_pde[indices, :].detach()
     print("X_pde OK")
 
     # Data test loading
-    X_test_pde = torch.empty((hyper_param["n_pde_test"] * nb_simu, 5))
+    X_test_pde = torch.empty((hyperparam["n_pde_test"] * nb_simu, 5))
     for nb in range(len(ya0_norm_full)):
         X_test_pde_without_param = torch.concat(
             (
-                rectangle.generate_lhs(hyper_param["n_pde_test"]),
-                ya0_norm_full[nb][0] * torch.ones(hyper_param["n_pde_test"]).reshape(-1, 1),
-                torch.ones(hyper_param["n_pde_test"]).reshape(-1, 1)
+                rectangle.generate_lhs(hyperparam["n_pde_test"]),
+                ya0_norm_full[nb][0] * torch.ones(hyperparam["n_pde_test"]).reshape(-1, 1),
+                torch.ones(hyperparam["n_pde_test"]).reshape(-1, 1)
                 * w0_norm_full[nb][0],
             ),
             dim=1,
         )
 
         X_test_pde[
-            nb * hyper_param["n_pde_test"]: (nb + 1) * hyper_param["n_pde_test"]
+            nb * hyperparam["n_pde_test"]: (nb + 1) * hyperparam["n_pde_test"]
         ] = X_test_pde_without_param
     indices = torch.randperm(X_test_pde.size(0))
     X_test_pde = X_test_pde[indices, :].detach()
 
     points_coloc_test = np.random.choice(
-        len(X_full), hyper_param["n_data_test"], replace=False
+        len(X_full), hyperparam["n_data_test"], replace=False
     )
     X_test_data = X_full[points_coloc_test]
     U_test_data = U_full[points_coloc_test]
@@ -392,11 +392,11 @@ def charge_data(hyper_param, param_adim):
     )
 
 
-def init_model(f, hyper_param, device, folder_result):
-    model = PINNs(hyper_param).to(device)
-    optimizer = optim.Adam(model.parameters(), lr=hyper_param["lr_init"])
+def init_model(f, hyperparam, device, folder_result):
+    model = PINNs(hyperparam).to(device)
+    optimizer = optim.Adam(model.parameters(), lr=hyperparam["lr_init"])
     scheduler = torch.optim.lr_scheduler.ExponentialLR(
-        optimizer, gamma=hyper_param["gamma_scheduler"]
+        optimizer, gamma=hyperparam["gamma_scheduler"]
     )
     loss = nn.MSELoss()
     # On regarde si notre modèle n'existe pas déjà
@@ -431,9 +431,9 @@ def init_model(f, hyper_param, device, folder_result):
         train_loss = {"total": [], "data": [], "pde": [], "border": []}
         test_loss = {"total": [], "data": [], "pde": [], "border": []}
         weights = {
-            "weight_data": hyper_param["weight_data"],
-            "weight_pde": hyper_param["weight_pde"],
-            "weight_border": hyper_param["weight_border"],
+            "weight_data": hyperparam["weight_data"],
+            "weight_pde": hyperparam["weight_pde"],
+            "weight_border": hyperparam["weight_border"],
         }
     return model, optimizer, scheduler, loss, train_loss, test_loss, weights
 

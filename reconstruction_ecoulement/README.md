@@ -33,7 +33,7 @@ Voilà un exemple du nombre de points que l'on prend pour un pas de temps :
 - `run.py` : Le fichier avec une classe qui permet de lancer les simulations. Il permet de faire le lien entre tous les fichiers.
 - `utils.py` : Pour charger les données sur lesquelles on va entraîner notre modèle, permet aussi de charger le modèle.
 - `train.py` : C'est ici que l'on va faire l'optimisation et nos différentes epochs
-- `results` : Chaque dossier représente une simulation différente, dans chaque dossier on retrouve le modèle aux différentes epochs ainsi que les plots qui ont été réalisés sur le modèle entraîné
+- `results` : Chaque dossier représente une simulation différente, dans chaque dossier on retrouve le modèle aux différentes epochs ainsi que les plots qui ont été réalisés sur le modèle entraîné. On trouvera aussi les hyperparamètres de chaque simulation dans le fichier hyperparam.json
 - `data`: dossier à créer pour mettre les données des modèles dans le domaine ainsi que sur les bords des domaines (me contacter ou demander à John Redford pour y avoir accès.)
 - `results_Cl` : dossier ou l'on a les résultats attendus de portance, pour comparer les résultats de nos modèles. On obtient ces résultats avec le code de John Redford
 - `plot_....ipynb` : afin de plot une certaine valeur. On retrouvera le plot dans le dossier results
