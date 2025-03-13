@@ -5,7 +5,7 @@
     "case": [
         2
     ],
-    "nb_epoch": 1000,
+    "nb_epoch": 10000,
     "save_rate": 50,
     "with_pinns": true,
     "dynamic_weights": false,
