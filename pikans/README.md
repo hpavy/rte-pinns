@@ -2,25 +2,23 @@
 
 ## Table des Matières
 
-- [Description](#description)
-- [Fichiers](#fichiers)
-- [Utilisation](#utilisation)
+- [Reconstruction d'écoulements](#reconstruction-découlements)
+  - [Table des Matières](#table-des-matières)
+  - [Description](#description)
+    - [Reconstruction avec les PIKANs :](#reconstruction-avec-les-pikans-)
+  - [Fichiers](#fichiers)
+  - [Utilisation](#utilisation)
+  - [Les différentes simulations](#les-différentes-simulations)
 
 ## Description
 
-Ce dossier montre deux exemples d'utilisation du code pour tenter de reconstruire un écoulement avec des données manquantes. Un premier exemple en utilisant les PINNs et un deuxième sans les utiliser. Il montre bien que les PINNs permettent de faire des choses que le machine learning classique ne peut pas faire.
+Ce dossier montre une implémentation de la technologie des PIKANs. On reconstruit un écoulement de la même manière que dans le dossier `reconstruction_ecoulement`
 
-Voilà un exemple du nombre de points que l'on prend pour un pas de temps :
 
-![Scatter Plot des Données](./results/1_reconstruction_avec_pinns/points_plot.png)
-
-### Reconstruction avec les PINNs :
+### Reconstruction avec les PIKANs :
 
 ![Vidéo de la reconstruction](./results/1_reconstruction_avec_pinns/velocity_norm.gif)
 
-
-### Reconstruction sans les PINNs :
-![Vidéo de la reconstruction](./results/2_reconstruction_sans_pinns/velocity_norm.gif)
 
 
 ## Fichiers
@@ -46,3 +44,10 @@ Il faut charger les données dans un dossier data dans ce fichier (cf utilisatio
 Ensuite régler les hyperparamètres comme on en a envie
 
 Et enfin on peut lancer dans le terminal avec la commande python main.py
+
+## Les différentes simulations
+
+- `1_reconstruction_avec_pinns`: on recontruit avec les pikans
+- `2_reconstruction_avec_moving_weights`: Un exemple d'utilisation des moving weights qui ne marche pas
+
+
