@@ -77,7 +77,7 @@ class RunSimulation:
 
             # On entraine le modèle
             train(
-                nb_epoch=1000,
+                nb_epoch=self.hyperparam['nb_epoch'],
                 train_loss=train_loss,
                 test_loss=test_loss,
                 weight_data_init=weight_data,

@@ -8,7 +8,7 @@
 
 ## Description
 
-Ce dossier montre deux exemples d'utilisation du code pour tenter de reconstruire un écoulement avec des données manquantes. Un premier exemple en utilisant les PINNs et un deuxième sans les utiliser. Il montre bien que les PINNs permettent de faire des choses que le machine learning classique ne peut pas faire.
+Ce dossier montre un exemple d'utilisation du code pour tenter de prédire un écoulement avec des données manquantes. Un premier exemple en utilisant les PINNs et un deuxième sans les utiliser. Il montre bien que les PINNs permettent de faire des choses que le machine learning classique ne peut pas faire.
 
 Voilà un exemple du nombre de points que l'on prend pour un pas de temps :
 
