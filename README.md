@@ -32,7 +32,7 @@ Si vous souhaitez lire mon rapport de stage ou pour toute autre demande, merci d
 
 ## Fonctionnalités
 
-Chaque dossier correspond au code d'une partie de mon rapport, il peut être pris de manière indépendante.
+Chaque dossier correspond au code d'une partie de mon rapport, il peut être pris de manière indépendante. Il y a beaucoup de similarité dans chaque dossier, j'aurais pu faire un module mieux construit mais je n'ai pas pris le temps. Une fois que l'on a compris le fonctionnement du code d'un dossier je pense donc que c'est très simple de se mettre dans un autre.
 
 Je lance mes codes sur la plateforme onyxia pour avoir accès à des GPU (cf le rapport)
 
