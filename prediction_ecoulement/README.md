@@ -8,19 +8,33 @@
 
 ## Description
 
-Ce dossier montre un exemple d'utilisation du code pour tenter de prédire un écoulement avec des données manquantes. Un premier exemple en utilisant les PINNs et un deuxième sans les utiliser. Il montre bien que les PINNs permettent de faire des choses que le machine learning classique ne peut pas faire.
-
-Voilà un exemple du nombre de points que l'on prend pour un pas de temps :
-
-![Scatter Plot des Données](./results/1_reconstruction_avec_pinns/points_plot.png)
-
-### Reconstruction avec les PINNs :
-
-![Vidéo de la reconstruction](./results/1_reconstruction_avec_pinns/velocity_norm.gif)
+Ce dossier montre un exemple d'utilisation du code pour tenter de prédire des écoulements sur lesquels nous n'avons pas entraîné le modèle. 
 
 
-### Reconstruction sans les PINNs :
-![Vidéo de la reconstruction](./results/2_reconstruction_sans_pinns/velocity_norm.gif)
+### Prédictions d'écoulements de validation :
+Sur des données de validation, on plot l'écoulement prédit ainsi que la courbe du coefficient de portance.
+
+#### H = 230.67 y0 = 3.13e-3
+![Vidéo de la reconstruction](./results/1_prediction/H_230.67/ya0_3.13e-03/velocity_norm.gif)
+![Vidéo de la reconstruction](./results/1_prediction/H_230.67/ya0_3.13e-03/pression.gif)
+![Scatter Plot des Données](./results/1_prediction/H_230.67/ya0_3.13e-03/cl.png)
+
+#### H = 261.39 y0 = 5.00e-3
+![Vidéo de la reconstruction](./results/1_prediction/H_261.39/ya0_5.00e-03/velocity_norm.gif)
+![Vidéo de la reconstruction](./results/1_prediction/H_261.39/ya0_5.00e-03/pression.gif)
+![plot_2](./results/1_prediction/H_261.39/ya0_5.00e-03/cl.png)
+
+
+#### H = 230.67 y0 = 6.88e-03
+![Vidéo de la reconstruction](./results/1_prediction/H_230.67/ya0_6.88e-03/velocity_norm.gif)
+![Vidéo de la reconstruction](./results/1_prediction/H_230.67/ya0_6.88e-03/pression.gif)
+![plot_2](./results/1_prediction/H_230.67/ya0_6.88e-03/cl.png)
+
+#### H = 261.39 y0 = 8.75e-03
+![Vidéo de la reconstruction](./results/1_prediction/H_261.39/ya0_8.75e-03/velocity_norm.gif)
+![Vidéo de la reconstruction](./results/1_prediction/H_261.39/ya0_8.75e-03/pression.gif)
+![plot_2](./results/1_prediction/H_261.39/ya0_8.75e-03/cl.png)
+
 
 
 ## Fichiers
@@ -37,6 +51,7 @@ Voilà un exemple du nombre de points que l'on prend pour un pas de temps :
 - `data`: dossier à créer pour mettre les données des modèles dans le domaine ainsi que sur les bords des domaines (me contacter ou demander à John Redford pour y avoir accès.)
 - `results_Cl` : dossier ou l'on a les résultats attendus de portance, pour comparer les résultats de nos modèles. On obtient ces résultats avec le code de John Redford
 - `plot_....ipynb` : afin de plot une certaine valeur. On retrouvera le plot dans le dossier results
+- `read_reduce.csv`: afin d'importer les csv d'Onyxia et de réduire leur taille pour ne pas arriver à cours de place sur le VS code
  
 
 ## Utilisation
