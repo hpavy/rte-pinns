@@ -1,0 +1,116 @@
+Nouveau modèle
+
+Il y a 53731 parametres
+--------------------------
+Starting at epoch: 0
+--------------------------
+---------------------
+Epoch 1/1000 :
+Train : loss: 5.828e-02
+time: 44s
+time: 16s
+---------------------
+Epoch 2/1000 :
+Train : loss: 5.669e-02
+time: 60s
+time: 16s
+---------------------
+Epoch 3/1000 :
+Train : loss: 5.769e-02
+time: 77s
+time: 17s
+---------------------
+Epoch 4/1000 :
+Train : loss: 5.846e-02
+time: 93s
+time: 16s
+---------------------
+Epoch 5/1000 :
+Train : loss: 5.431e-02
+time: 109s
+time: 16s
+---------------------
+Epoch 6/1000 :
+Train : loss: 5.418e-02
+time: 125s
+time: 16s
+---------------------
+Epoch 7/1000 :
+Train : loss: 5.069e-02
+time: 142s
+time: 16s
+---------------------
+Epoch 8/1000 :
+Train : loss: 5.573e-02
+time: 158s
+time: 17s
+---------------------
+Epoch 9/1000 :
+Train : loss: 5.367e-02
+time: 175s
+time: 17s
+---------------------
+Epoch 10/1000 :
+Train : loss: 5.456e-02
+time: 191s
+time: 16s
+---------------------
+Epoch 11/1000 :
+Train : loss: 5.212e-02
+time: 207s
+time: 16s
+---------------------
+Epoch 12/1000 :
+Train : loss: 5.087e-02
+time: 224s
+time: 17s
+---------------------
+Epoch 13/1000 :
+Train : loss: 5.187e-02
+time: 241s
+time: 17s
+---------------------
+Epoch 14/1000 :
+Train : loss: 5.018e-02
+time: 257s
+time: 16s
+---------------------
+Epoch 15/1000 :
+Train : loss: 5.272e-02
+time: 274s
+time: 17s
+---------------------
+Epoch 16/1000 :
+Train : loss: 5.291e-02
+time: 291s
+time: 17s
+---------------------
+Epoch 17/1000 :
+Train : loss: 5.022e-02
+time: 307s
+time: 17s
+---------------------
+Epoch 18/1000 :
+Train : loss: 5.214e-02
+time: 323s
+time: 16s
+---------------------
+Epoch 19/1000 :
+Train : loss: 4.647e-02
+time: 340s
+time: 17s
+---------------------
+Epoch 20/1000 :
+Train : loss: 4.953e-02
+time: 357s
+time: 16s
+---------------------
+Epoch 21/1000 :
+Train : loss: 4.634e-02
+time: 373s
+time: 17s
+---------------------
+Epoch 22/1000 :
+Train : loss: 4.796e-02
+time: 390s
+time: 16s

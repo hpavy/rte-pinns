@@ -1,23 +1,39 @@
-# PIKANs
+# Reconstruction d'écoulements
 
 ## Table des Matières
 
-- [PIKANs](#pikans)
-  - [Table des Matières](#table-des-matières)
-  - [Description](#description)
-    - [Reconstruction avec les PIKANs :](#reconstruction-avec-les-pikans-)
-  - [Fichiers](#fichiers)
-  - [Utilisation](#utilisation)
-  - [Les différentes simulations](#les-différentes-simulations)
+- [Description](#description)
+- [Fichiers](#fichiers)
+- [Utilisation](#utilisation)
 
 ## Description
 
-Ce dossier montre une implémentation de la technologie des PIKANs. On reconstruit un écoulement de la même manière que dans le dossier `reconstruction_ecoulement`
+Ce dossier montre un exemple d'utilisation du code pour tenter de prédire des écoulements sur lesquels nous n'avons pas entraîné le modèle. 
 
 
-### Reconstruction avec les PIKANs :
+### Prédictions d'écoulements de validation :
+Sur des données de validation, on plot l'écoulement prédit ainsi que la courbe du coefficient de portance.
 
-![Vidéo de la reconstruction](./results/1_reconstruction_avec_pinns/velocity_norm.gif)
+#### H = 230.67 y0 = 3.13e-3
+![Vidéo de la reconstruction](./results/1_prediction/H_230.67/ya0_3.13e-03/velocity_norm.gif)
+![Vidéo de la reconstruction](./results/1_prediction/H_230.67/ya0_3.13e-03/pression.gif)
+![Scatter Plot des Données](./results/1_prediction/H_230.67/ya0_3.13e-03/cl.png)
+
+#### H = 261.39 y0 = 5.00e-3
+![Vidéo de la reconstruction](./results/1_prediction/H_261.39/ya0_5.00e-03/velocity_norm.gif)
+![Vidéo de la reconstruction](./results/1_prediction/H_261.39/ya0_5.00e-03/pression.gif)
+![plot_2](./results/1_prediction/H_261.39/ya0_5.00e-03/cl.png)
+
+
+#### H = 230.67 y0 = 6.88e-03
+![Vidéo de la reconstruction](./results/1_prediction/H_230.67/ya0_6.88e-03/velocity_norm.gif)
+![Vidéo de la reconstruction](./results/1_prediction/H_230.67/ya0_6.88e-03/pression.gif)
+![plot_2](./results/1_prediction/H_230.67/ya0_6.88e-03/cl.png)
+
+#### H = 261.39 y0 = 8.75e-03
+![Vidéo de la reconstruction](./results/1_prediction/H_261.39/ya0_8.75e-03/velocity_norm.gif)
+![Vidéo de la reconstruction](./results/1_prediction/H_261.39/ya0_8.75e-03/pression.gif)
+![plot_2](./results/1_prediction/H_261.39/ya0_8.75e-03/cl.png)
 
 
 
@@ -35,6 +51,7 @@ Ce dossier montre une implémentation de la technologie des PIKANs. On reconstru
 - `data`: dossier à créer pour mettre les données des modèles dans le domaine ainsi que sur les bords des domaines (me contacter ou demander à John Redford pour y avoir accès.)
 - `results_Cl` : dossier ou l'on a les résultats attendus de portance, pour comparer les résultats de nos modèles. On obtient ces résultats avec le code de John Redford
 - `plot_....ipynb` : afin de plot une certaine valeur. On retrouvera le plot dans le dossier results
+- `read_reduce.csv`: afin d'importer les csv d'Onyxia et de réduire leur taille pour ne pas arriver à cours de place sur le VS code
  
 
 ## Utilisation
@@ -44,10 +61,3 @@ Il faut charger les données dans un dossier data dans ce fichier (cf utilisatio
 Ensuite régler les hyperparamètres comme on en a envie
 
 Et enfin on peut lancer dans le terminal avec la commande python main.py
-
-## Les différentes simulations
-
-- `1_reconstruction_avec_pinns`: on recontruit avec les pikans
-- `2_reconstruction_avec_moving_weights`: Un exemple d'utilisation des moving weights qui ne marche pas
-
-
