@@ -13,7 +13,7 @@ hyperparam_init = {
     "num": [2, 3, 5, 6, 8, 9, 11, 12, 14, 2, 3, 5, 6, 8, 9, 11, 12, 14],
     "case": [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2],
     "nb_epoch": 1000,  # le nombre d'epoch
-    "save_rate": 20,
+    "save_rate": 3,
     "dynamic_weights": False,  # Est ce qu'on fait bouger de manière dynamique les poids
     "lr_weights": 0.1,  # la learning rate pour les poids si on les fait bouger
     "weight_data": 0.6,  # le poids initial de la data

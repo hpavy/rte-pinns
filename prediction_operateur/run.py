@@ -62,8 +62,13 @@ class RunSimulation:
         # On écrit mean_std
         mean_std_json = dict()
         for key in mean_std:
-            mean_std_json[key] = mean_std[key].item()
-        with open(self.folder_result + "/mean_std.json", "w") as file:
+            if (key != 'x_branch_std') and (key != 'x_branch_mean'):
+                mean_std_json[key] = mean_std[key].item() 
+        for k, element in enumerate(mean_std['x_branch_std']):
+            mean_std_json[f'std{k}'] = element.item()
+        for k, element in enumerate(mean_std['x_branch_mean']):
+            mean_std_json[f'mean{k}'] = element.item()
+        with open(self.folder_result + '/mean_std.json', 'w') as file:
             json.dump(mean_std_json, file, indent=4)
 
         # On plot les print dans un fichier texte

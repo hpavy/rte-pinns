@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 import torch.nn as nn
 import torch.optim as optim
-from model import PINNs
+from model import DeepONet
 import torch
 import time
 from geometry import RectangleWithoutCylinder
@@ -42,7 +42,7 @@ def charge_data(hyperparam, param_adim):
     # On charge les fichiers
     x_full, y_full, t_full, x_branch_full = [], [], [], []
     u_full, v_full, p_full = [], [], []
-    x_border, y_border, t_border, x_branch_border = [], [], [], [], []
+    x_border, y_border, t_border, x_branch_border = [], [], [], []
     u_border, v_border, p_border = [], [], []
     x_norm_full, y_norm_full, t_norm_full, x_branch_norm_full = (
         [],
@@ -184,7 +184,7 @@ def charge_data(hyperparam, param_adim):
                 t_max=t_max_plot,
             )
             .reshape(-1, 1)
-            .repeat(1, x_full[-1].shape[0])
+            .repeat(1, x_border[-1].shape[0])
             .T
         )
         u_border.append(0.0 * torch.zeros(t_border[k].shape[0], dtype=torch.float32))
@@ -287,7 +287,7 @@ def charge_data(hyperparam, param_adim):
     X_branch_full = torch.cat([x_b for x_b in x_branch_norm_full])
     X_branch_border = torch.cat([x_b for x_b in x_branch_norm_border])
     X_trunk_train = torch.zeros((0, 3))
-    X_branch_train = torch.zeros((0, 1))
+    X_branch_train = torch.zeros((0, 100))
     U_train = torch.zeros((0, 3))
     print("Starting X_train")
     print("Starting X_train")
@@ -318,7 +318,7 @@ def charge_data(hyperparam, param_adim):
             X_trunk_train = torch.cat((X_trunk_train, new_x))
             U_train = torch.cat((U_train, new_y))
             X_branch_train = torch.cat(
-                (X_branch_train, x_branch_norm_full[nb][indices, :]), dim=0
+                (X_branch_train, x_branch_norm_full[nb][indices, :])
             )
     indices = torch.randperm(X_trunk_train.size(0))
     X_trunk_train = X_trunk_train[indices]
@@ -369,7 +369,7 @@ def charge_data(hyperparam, param_adim):
 
 
 def init_model(f, hyperparam, device, folder_result):
-    model = PINNs(hyperparam).to(device)
+    model = DeepONet(hyperparam).to(device)
     optimizer = optim.Adam(model.parameters(), lr=hyperparam["lr_init"])
     scheduler = torch.optim.lr_scheduler.ExponentialLR(
         optimizer, gamma=hyperparam["gamma_scheduler"]
@@ -390,13 +390,11 @@ def init_model(f, hyperparam, device, folder_result):
         train_loss = {
             "total": list(csv_train["total"]),
             "data": list(csv_train["data"]),
-            "pde": list(csv_train["pde"]),
             "border": list(csv_train["border"]),
         }
         test_loss = {
             "total": list(csv_test["total"]),
             "data": list(csv_test["data"]),
-            "pde": list(csv_test["pde"]),
             "border": list(csv_test["border"]),
         }
         print("\nLoss chargée\n", file=f)
@@ -404,11 +402,10 @@ def init_model(f, hyperparam, device, folder_result):
     else:
         print("Nouveau modèle\n", file=f)
         print("Nouveau modèle\n")
-        train_loss = {"total": [], "data": [], "pde": [], "border": []}
-        test_loss = {"total": [], "data": [], "pde": [], "border": []}
+        train_loss = {"total": [], "data": [], "border": []}
+        test_loss = {"total": [], "data": [], "border": []}
         weights = {
             "weight_data": hyperparam["weight_data"],
-            "weight_pde": hyperparam["weight_pde"],
             "weight_border": hyperparam["weight_border"],
         }
     return model, optimizer, scheduler, loss, train_loss, test_loss, weights

@@ -1,4 +1,4 @@
-# Reconstruction d'écoulements
+# Prédiction d'écoulements avec les Deep O Net
 
 ## Table des Matières
 
@@ -8,7 +8,7 @@
 
 ## Description
 
-Ce dossier montre un exemple d'utilisation du code pour tenter de prédire des écoulements sur lesquels nous n'avons pas entraîné le modèle. 
+Ce dossier montre un exemple d'utilisation du code pour tenter de prédire des écoulements avec les Deep O Net sur lesquels nous n'avons pas entraîné le modèle. On remarque que l'on fit bien mais les courbes sont moins propres qu'avec les PINNs classiques, cela vient du fait que l'on a pas l'équation différentielle qui vient 'lisser' la courbe. Il faudrait essayer d'utiliser la physique pour les opérateurs.
 
 
 ### Prédictions d'écoulements de validation :
