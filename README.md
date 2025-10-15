@@ -1,8 +1,42 @@
-# Github lié au stage de Hugo Pavy à RTE sur les PINNs
+# GitHub Repository for Hugo Pavy’s Internship at RTE on PINNs
 
-**English version below**
+**version française plus bas**
 
 ---
+
+## Table of Contents
+- [Description](#description)
+- [Features](#features)
+
+## Description
+
+### Internship Context
+This document summarizes six months of work completed during my first gap-year internship, before my final year at Mines Paris. The internship took place at RTE, within the Asset Management R&D department, which focuses on predicting asset failures (cables, pylons, etc.), optimizing their replacement, and designing failure detection methods.
+The department is developing a model to predict cable fatigue, requiring a large number of flow simulations around a cylinder. Given the high computational cost, the goal of this internship was to leverage deep learning to produce near-instantaneous simulations.
+During this internship, I worked on classical deep learning methods in the context of Physics-Informed Neural Networks (PINNs). I explored and learned various architectures. The appendix includes the best online resources I found to train on these concepts.
+This internship builds upon the work of Issame Maghraoui, a Polytechnique student, who completed a 3-month internship at RTE prior to my arrival.
+
+### Key Focus Areas
+My work focused on PINNs. Initially, the goal was to reconstruct a flow from partial data, essentially performing interpolation. I then aimed to predict flows around moving cables. I also explored several architectures: classical MLPs, PIKANs, Deep Neural Operators, and GNNs.
+I had the opportunity to present my work at the DTE AICOMAS conference, a highly rewarding experience both for showcasing my research and learning from others. Special thanks to Fikri, John, and Eric for this opportunity.
+For any inquiries (reading my internship report, questions, etc.), feel free to contact me via email or LinkedIn:
+**Email**: [hugo.pavy@etu.minesparis.psl.eu](mailto:hugo.pavy@etu.minesparis.psl.eu)
+**LinkedIn**: [Hugo Pavy](https://www.linkedin.com/in/hugo-pavy/)
+
+## Features
+Each folder corresponds to a section of my report and can be used independently. While the codes share many similarities, I did not have time to create a more modular structure. Once you understand the structure of one folder, navigating the others is straightforward.
+The codes are run on the Onyxia platform to access GPUs (see the report for details).
+Overall, the codes share a similar file structure.
+
+## Flow Reconstruction Examples
+### Reconstruction with PINNs:
+![Flow Reconstruction Video](./reconstruction_ecoulement/results/1_reconstruction_avec_pinns/velocity_norm.gif)
+### Reconstruction without PINNs:
+![Flow Reconstruction Video](./reconstruction_ecoulement/results/2_reconstruction_sans_pinns/velocity_norm.gif)
+
+
+# Github lié au stage de Hugo Pavy à RTE sur les PINNs
+
 
 ## Table des Matières
 - [Description](#description)
@@ -36,34 +70,4 @@ Globalement, les codes partagent une structure de fichiers similaire.
 
 ---
 
-# GitHub Repository for Hugo Pavy’s Internship at RTE on PINNs
 
-## Table of Contents
-- [Description](#description)
-- [Features](#features)
-
-## Description
-
-### Internship Context
-This document summarizes six months of work completed during my first gap-year internship, before my final year at Mines Paris. The internship took place at RTE, within the Asset Management R&D department, which focuses on predicting asset failures (cables, pylons, etc.), optimizing their replacement, and designing failure detection methods.
-The department is developing a model to predict cable fatigue, requiring a large number of flow simulations around a cylinder. Given the high computational cost, the goal of this internship was to leverage deep learning to produce near-instantaneous simulations.
-During this internship, I worked on classical deep learning methods in the context of Physics-Informed Neural Networks (PINNs). I explored and learned various architectures. The appendix includes the best online resources I found to train on these concepts.
-This internship builds upon the work of Issame Maghraoui, a Polytechnique student, who completed a 3-month internship at RTE prior to my arrival.
-
-### Key Focus Areas
-My work focused on PINNs. Initially, the goal was to reconstruct a flow from partial data, essentially performing interpolation. I then aimed to predict flows around moving cables. I also explored several architectures: classical MLPs, PIKANs, Deep Neural Operators, and GNNs.
-I had the opportunity to present my work at the DTE AICOMAS conference, a highly rewarding experience both for showcasing my research and learning from others. Special thanks to Fikri, John, and Eric for this opportunity.
-For any inquiries (reading my internship report, questions, etc.), feel free to contact me via email or LinkedIn:
-**Email**: [hugo.pavy@etu.minesparis.psl.eu](mailto:hugo.pavy@etu.minesparis.psl.eu)
-**LinkedIn**: [Hugo Pavy](https://www.linkedin.com/in/hugo-pavy/)
-
-## Features
-Each folder corresponds to a section of my report and can be used independently. While the codes share many similarities, I did not have time to create a more modular structure. Once you understand the structure of one folder, navigating the others is straightforward.
-The codes are run on the Onyxia platform to access GPUs (see the report for details).
-Overall, the codes share a similar file structure.
-
-## Flow Reconstruction Examples
-### Reconstruction with PINNs:
-![Flow Reconstruction Video](./reconstruction_ecoulement/results/1_reconstruction_avec_pinns/velocity_norm.gif)
-### Reconstruction without PINNs:
-![Flow Reconstruction Video](./reconstruction_ecoulement/results/2_reconstruction_sans_pinns/velocity_norm.gif)
