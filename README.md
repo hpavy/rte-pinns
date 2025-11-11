@@ -1,6 +1,7 @@
 # GitHub Repository for Hugo Pavy’s Internship at RTE on PINNs
 
 **version française plus bas**
+
 Lien du rapport de stage: https://drive.google.com/file/d/1Fp-Xus6M--zSn0oSsaZ_ipSUnZV2aXdi/view?usp=sharing
 
 ---
@@ -16,6 +17,7 @@ This document summarizes six months of work completed during my first gap-year i
 The department is developing a model to predict cable fatigue, requiring a large number of flow simulations around a cylinder. Given the high computational cost, the goal of this internship was to leverage deep learning to produce near-instantaneous simulations.
 During this internship, I worked on classical deep learning methods in the context of Physics-Informed Neural Networks (PINNs). I explored and learned various architectures. The appendix includes the best online resources I found to train on these concepts.
 This internship builds upon the work of Issame Maghraoui, a Polytechnique student, who completed a 3-month internship at RTE prior to my arrival.
+
 Link of the internship report: https://drive.google.com/file/d/1Fp-Xus6M--zSn0oSsaZ_ipSUnZV2aXdi/view?usp=sharing
 
 ### Key Focus Areas
