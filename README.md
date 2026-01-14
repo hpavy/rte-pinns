@@ -2,7 +2,7 @@
 
 **version française plus bas**
 
-Lien du rapport de stage: https://drive.google.com/file/d/1Fp-Xus6M--zSn0oSsaZ_ipSUnZV2aXdi/view?usp=sharing
+Lien du rapport de stage: [rapport](rapport_stage_pinns.pdf)
 
 ---
 
